@@ -1,4 +1,4 @@
-use std::{env, fs, io::{self, Write}};
+use std::{env, fs, io::{self, Write}, time::Instant};
 use console::Term;
 
 fn main() {
@@ -13,6 +13,17 @@ fn main() {
             match parse_path(args[2].as_str()) {
                 None => { println!("Invalid path."); },
                 Some(bf) => { dumb_brainfuck(bf.as_str()); },
+            }
+        }
+        "b" | "bench" => {
+            if args_len < 3 { print_help(); return; }
+            match parse_path(args[2].as_str()) {
+                None => { println!("Invalid path."); },
+                Some(bf) => {
+                    let instant = Instant::now();
+                    dumb_brainfuck(bf.as_str());
+                    println!("Program executed in {}s", instant.elapsed().as_secs_f64())
+                },
             }
         }
         _ => print_help(),

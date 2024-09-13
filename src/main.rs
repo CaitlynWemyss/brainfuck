@@ -10,16 +10,16 @@ fn main() {
     match args[1].as_str() {
         "r" | "run" => {
             if args_len < 3 { print_help(); return; }
-            match parse_path(args[2].as_str()) {
-                None => { println!("Invalid path."); },
-                Some(bf) => { dumb_brainfuck(bf.as_str()); },
+            match fs::read_to_string(args[2].as_str()) {
+                Err(_) => { println!("Invalid path."); },
+                Ok(bf) => { dumb_brainfuck(bf.as_str()); },
             }
         }
         "b" | "bench" => {
             if args_len < 3 { print_help(); return; }
-            match parse_path(args[2].as_str()) {
-                None => { println!("Invalid path."); },
-                Some(bf) => {
+            match fs::read_to_string(args[2].as_str()) {
+                Err(_) => { println!("Invalid path."); },
+                Ok(bf) => {
                     let instant = Instant::now();
                     dumb_brainfuck(bf.as_str());
                     println!("Program executed in {}s", instant.elapsed().as_secs_f64())
@@ -27,13 +27,6 @@ fn main() {
             }
         }
         _ => print_help(),
-    }
-
-    fn parse_path(path: &str) -> Option<String> { // I honestly can't tell if this function is even useful but whatever
-        match fs::read_to_string(path) {
-            Ok(s) => Some(s),
-            Err(_) => None,
-        }
     }
 
     fn print_help() {
